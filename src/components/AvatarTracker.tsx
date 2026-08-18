@@ -82,7 +82,7 @@ export function AvatarTracker({ stage, stageName, progress, avatarStyle }: Avata
         {progress === 8 && (
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-100 to-purple-100 rounded-full">
             <span className="text-sm font-medium text-indigo-900">
-              Daily Core 8 Complete!
+              Today's practice complete!
             </span>
           </div>
         )}

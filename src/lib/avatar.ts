@@ -1,4 +1,4 @@
-import type { AvatarStage, AvatarStageInfo, DailyCore8 } from './types';
+import type { AvatarStageInfo, DailyCore8 } from './types';
 
 export const AVATAR_STAGES: Record<number, AvatarStageInfo> = {
   0: {
@@ -81,13 +81,52 @@ export function getProgressPercentage(progress: number): number {
   return (progress / 8) * 100;
 }
 
-export const CORE_8_ITEMS = [
-  { key: 'fitness', label: 'Fitness', description: 'Move your body' },
-  { key: 'fuel', label: 'Fuel', description: 'Nourish yourself' },
-  { key: 'meditation', label: 'Meditation', description: 'Center your mind' },
-  { key: 'memoirs', label: 'Memoirs', description: 'Reflect and journal' },
-  { key: 'person_1', label: 'Person 1', description: 'Connect with someone' },
-  { key: 'person_2', label: 'Person 2', description: 'Connect with another' },
-  { key: 'discovery', label: 'Discovery', description: 'Learn something new' },
-  { key: 'declare', label: 'Declare', description: 'Affirm your path' },
+/*
+  The eight daily items. `key` is the column name in daily_core_8 and the key
+  used inside its `notes` JSON — it is an internal identifier, so labels can be
+  reworded freely without touching stored data.
+*/
+export const PRACTICE_ITEMS = [
+  {
+    key: 'fitness',
+    label: 'Move your body',
+    description: 'Physical movement — a workout, a walk, anything that gets you going',
+  },
+  {
+    key: 'fuel',
+    label: 'Nourishment',
+    description: 'Eating and drinking with intention today',
+  },
+  {
+    key: 'meditation',
+    label: 'Meditation or prayer',
+    description: 'Quiet time for your mind and spirit',
+  },
+  {
+    key: 'memoirs',
+    label: 'Reflection',
+    description: 'Write something honest about how you are doing',
+  },
+  {
+    key: 'person_1',
+    label: 'Connect — someone you love',
+    description: 'Reach out to someone who matters to you',
+  },
+  {
+    key: 'person_2',
+    label: 'Reach out intentionally',
+    description: 'A second meaningful connection today',
+  },
+  {
+    key: 'discovery',
+    label: 'Learn something new',
+    description: 'A book, podcast, article, or conversation that taught you something',
+  },
+  {
+    key: 'declare',
+    label: 'Your word for today',
+    description: 'One intention you are bringing into this day',
+  },
 ] as const;
+
+export type PracticeItemKey = (typeof PRACTICE_ITEMS)[number]['key'];

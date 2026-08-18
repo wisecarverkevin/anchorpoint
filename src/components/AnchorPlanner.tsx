@@ -16,24 +16,24 @@ interface ColumnConfig {
 const columns: ColumnConfig[] = [
   {
     status: 'quicklist',
-    title: 'Quicklist',
+    title: 'On deck',
     icon: ListTodo,
     color: '#6B7280',
-    description: 'Idea pool for future tasks',
+    description: 'Ideas waiting for their turn',
   },
   {
     status: 'hotlist',
-    title: 'Hotlist',
+    title: "Today's focus",
     icon: Zap,
     color: '#EF4444',
-    description: "Today's priority tasks",
+    description: 'What you are actually doing today',
   },
   {
     status: 'achieved',
-    title: 'Achieved',
+    title: 'Done',
     icon: CheckCircle2,
     color: '#10B981',
-    description: 'Completed tasks',
+    description: 'Finished',
   },
 ];
 

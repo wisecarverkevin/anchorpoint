@@ -1,20 +1,25 @@
 import { useState, useEffect } from 'react';
-import { Anchor, RefreshCw, Target, ListChecks, Home, Users, Settings, Sparkles } from 'lucide-react';
+import { Anchor, RefreshCw, Target, ListChecks, Home, Users, Settings, Sparkles, LogOut } from 'lucide-react';
 import { supabase } from './lib/supabase';
+import { useAuth } from './lib/AuthContext';
 import type { Cornerstone } from './lib/types';
 import { CornerstoneCard } from './components/CornerstoneCard';
 import { CornerstoneDetail } from './components/CornerstoneDetail';
-import { DailyReset } from './components/DailyReset';
+import { Reset } from './components/Reset';
 import { AnchorPlanner } from './components/AnchorPlanner';
 import CalendarView from './components/CalendarView';
 import CalendarSettings from './components/CalendarSettings';
 import EventForm from './components/EventForm';
 import SupportCrewManager from './components/SupportCrewManager';
 import { DailyCore8Checklist } from './components/DailyCore8Checklist';
+import { MorningCheckIn } from './components/MorningCheckIn';
+import { ConsentModal } from './components/ConsentModal';
+import { isMorning, localDateString } from './lib/morning';
 
 type View = 'home' | 'daily-core-8' | 'daily-reset' | 'planner' | 'cornerstones' | 'support-crew' | 'settings';
 
 function App() {
+  const { user, signOut } = useAuth();
   const [currentView, setCurrentView] = useState<View>('home');
   const [cornerstones, setCornerstones] = useState<Cornerstone[]>([]);
   const [selectedCornerstone, setSelectedCornerstone] = useState<Cornerstone | null>(null);
@@ -23,13 +28,47 @@ function App() {
   const [eventFormDate, setEventFormDate] = useState<Date | undefined>();
   const [eventFormStartTime, setEventFormStartTime] = useState<Date | undefined>();
   const [calendarKey, setCalendarKey] = useState(0);
+  const [showMorningCheckIn, setShowMorningCheckIn] = useState(false);
+  const [consentRecorded, setConsentRecorded] = useState(false);
 
   useEffect(() => {
-    fetchCornerstones();
+    void loadInitialState();
   }, []);
 
-  const fetchCornerstones = async () => {
+  /*
+    The morning check-in decision has to resolve before anything renders, or the
+    dashboard flashes for a frame before being replaced. Both the cornerstones
+    fetch and the check-in lookup run inside the single `loading` gate.
+  */
+  const loadInitialState = async () => {
+    const needsCheckIn = isMorning() ? await hasNoCheckInToday() : false;
+    setShowMorningCheckIn(needsCheckIn);
+
+    await fetchCornerstones();
+    setLoading(false);
+  };
+
+  const hasNoCheckInToday = async (): Promise<boolean> => {
+    /*
+      RLS already limits this to the caller's own rows, so no user_id filter is
+      needed. On a query error, fail open to the dashboard: a transient network
+      blip should never lock someone behind a check-in screen.
+    */
     const { data, error } = await supabase
+      .from('daily_checkins')
+      .select('id')
+      .eq('date', localDateString())
+      .maybeSingle();
+
+    if (error) {
+      console.error('Error checking morning check-in:', error);
+      return false;
+    }
+    return data === null;
+  };
+
+  const fetchCornerstones = async () => {
+    const { data } = await supabase
       .from('cornerstones')
       .select('*')
       .order('order_index', { ascending: true });
@@ -40,7 +79,6 @@ function App() {
         setSelectedCornerstone(data[0]);
       }
     }
-    setLoading(false);
   };
 
   if (loading) {
@@ -52,6 +90,22 @@ function App() {
         </div>
       </div>
     );
+  }
+
+  /*
+    Consent gates everything, including the morning check-in — an account that
+    has not agreed should not be writing reflections. `consentRecorded` covers
+    the moment between the update succeeding and the refreshed user propagating
+    through the auth listener.
+  */
+  const hasConsented = Boolean(user?.user_metadata?.consent_agreed_at) || consentRecorded;
+  if (!hasConsented) {
+    return <ConsentModal onAgreed={() => setConsentRecorded(true)} />;
+  }
+
+  /* Full focus: rendered instead of the whole shell, so there is no nav. */
+  if (showMorningCheckIn) {
+    return <MorningCheckIn onComplete={() => setShowMorningCheckIn(false)} />;
   }
 
   return (
@@ -85,7 +139,7 @@ function App() {
                 }`}
               >
                 <Sparkles size={18} />
-                Core 8
+                Today's practice
               </button>
               <button
                 onClick={() => setCurrentView('daily-reset')}
@@ -143,6 +197,20 @@ function App() {
                 Settings
               </button>
             </div>
+
+            <div className="flex items-center gap-3 min-w-0 pl-4 ml-2 border-l border-stone-200">
+              <span className="text-sm text-stone-600 truncate max-w-[16rem]" title={user?.email ?? ''}>
+                {user?.email}
+              </span>
+              <button
+                onClick={() => signOut()}
+                title="Sign out"
+                aria-label="Sign out"
+                className="flex items-center gap-2 px-3 py-2 rounded-lg font-medium text-stone-600 hover:text-stone-900 hover:bg-stone-50 transition-colors shrink-0"
+              >
+                <LogOut size={18} />
+              </button>
+            </div>
           </div>
         </div>
       </nav>
@@ -166,9 +234,9 @@ function App() {
                 className="bg-white border border-stone-200 rounded-xl p-6 text-left hover:shadow-md transition-shadow"
               >
                 <Sparkles className="w-8 h-8 text-stone-700 mb-3" />
-                <h3 className="text-xl font-medium text-stone-900 mb-2">Daily Core 8</h3>
+                <h3 className="text-xl font-medium text-stone-900 mb-2">Today's practice</h3>
                 <p className="text-stone-600">
-                  Track your 8 daily essentials and watch your avatar evolve
+                  Track your eight daily essentials and watch your avatar evolve
                 </p>
               </button>
 
@@ -179,7 +247,8 @@ function App() {
                 <RefreshCw className="w-8 h-8 text-stone-700 mb-3" />
                 <h3 className="text-xl font-medium text-stone-900 mb-2">Daily Reset</h3>
                 <p className="text-stone-600">
-                  Reflect on your day with clarity, gratitude, or insight resets
+                  Take a breath. Work through what you are carrying. Come out clearer than you
+                  went in.
                 </p>
               </button>
 
@@ -246,7 +315,7 @@ function App() {
 
         {currentView === 'support-crew' && <SupportCrewManager />}
 
-        {currentView === 'daily-reset' && <DailyReset />}
+        {currentView === 'daily-reset' && <Reset />}
 
         {currentView === 'settings' && (
           <div className="max-w-3xl mx-auto">
