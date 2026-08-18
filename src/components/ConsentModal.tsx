@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Anchor, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { useAuth } from '../lib/AuthContext';
 import { ConsentText } from './ConsentText';
 
 interface ConsentModalProps {
@@ -14,6 +15,7 @@ interface ConsentModalProps {
   the app is not usable until consent is recorded.
 */
 export function ConsentModal({ onAgreed }: ConsentModalProps) {
+  const { signOut } = useAuth();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -74,6 +76,22 @@ export function ConsentModal({ onAgreed }: ConsentModalProps) {
           {saving && <Loader2 size={16} className="animate-spin" />}
           I agree
         </button>
+
+        {/*
+          A way out for anyone who does not want to agree. Without it the modal
+          is a dead end: no dismiss, no backdrop click, and the app behind it is
+          unreachable.
+        */}
+        <div className="mt-4 text-center">
+          <button
+            type="button"
+            onClick={() => void signOut()}
+            disabled={saving}
+            className="text-sm text-stone-500 hover:text-stone-800 hover:underline disabled:opacity-50 transition-colors"
+          >
+            Sign out
+          </button>
+        </div>
       </div>
     </div>
   );
