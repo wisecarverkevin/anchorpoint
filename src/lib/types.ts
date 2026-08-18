@@ -1,504 +1,858 @@
-export interface Database {
+/*
+  Database types generated from the live schema with:
+    supabase gen types typescript --project-id cbxdsvhhygpdnyvapigf
+
+  Regenerate after any migration. Hand-written domain aliases live below the
+  generated block and are preserved across regeneration.
+*/
+
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
+
+export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "14.15"
+  }
   public: {
     Tables: {
-      cornerstones: {
-        Row: {
-          id: string;
-          name: string;
-          description: string;
-          icon: string;
-          color: string;
-          order_index: number;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          name: string;
-          description?: string;
-          icon?: string;
-          color?: string;
-          order_index: number;
-          created_at?: string;
-        };
-        Update: {
-          id?: string;
-          name?: string;
-          description?: string;
-          icon?: string;
-          color?: string;
-          order_index?: number;
-          created_at?: string;
-        };
-      };
-      yearly_visions: {
-        Row: {
-          id: string;
-          cornerstone_id: string;
-          year: number;
-          content: string;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          cornerstone_id: string;
-          year: number;
-          content: string;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          cornerstone_id?: string;
-          year?: number;
-          content?: string;
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
-      quarterly_goals: {
-        Row: {
-          id: string;
-          cornerstone_id: string;
-          year: number;
-          quarter: number;
-          content: string;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          cornerstone_id: string;
-          year: number;
-          quarter: number;
-          content: string;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          cornerstone_id?: string;
-          year?: number;
-          quarter?: number;
-          content?: string;
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
-      monthly_milestones: {
-        Row: {
-          id: string;
-          cornerstone_id: string;
-          year: number;
-          month: number;
-          content: string;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          cornerstone_id: string;
-          year: number;
-          month: number;
-          content: string;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          cornerstone_id?: string;
-          year?: number;
-          month?: number;
-          content?: string;
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
-      weekly_anchors: {
-        Row: {
-          id: string;
-          cornerstone_id: string;
-          year: number;
-          week: number;
-          content: string;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          cornerstone_id: string;
-          year: number;
-          week: number;
-          content: string;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          cornerstone_id?: string;
-          year?: number;
-          week?: number;
-          content?: string;
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
-      journal_entries: {
-        Row: {
-          id: string;
-          reset_type: 'clarity' | 'gratitude' | 'insight';
-          content: string;
-          tags: string[];
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          reset_type: 'clarity' | 'gratitude' | 'insight';
-          content: string;
-          tags?: string[];
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          reset_type?: 'clarity' | 'gratitude' | 'insight';
-          content?: string;
-          tags?: string[];
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
-      tasks: {
-        Row: {
-          id: string;
-          title: string;
-          description: string;
-          status: 'quicklist' | 'hotlist' | 'achieved';
-          cornerstone_id: string;
-          weekly_anchor_id: string | null;
-          power_block: string;
-          order_index: number;
-          created_at: string;
-          updated_at: string;
-          completed_at: string | null;
-        };
-        Insert: {
-          id?: string;
-          title: string;
-          description?: string;
-          status?: 'quicklist' | 'hotlist' | 'achieved';
-          cornerstone_id: string;
-          weekly_anchor_id?: string | null;
-          power_block?: string;
-          order_index?: number;
-          created_at?: string;
-          updated_at?: string;
-          completed_at?: string | null;
-        };
-        Update: {
-          id?: string;
-          title?: string;
-          description?: string;
-          status?: 'quicklist' | 'hotlist' | 'achieved';
-          cornerstone_id?: string;
-          weekly_anchor_id?: string | null;
-          power_block?: string;
-          order_index?: number;
-          created_at?: string;
-          updated_at?: string;
-          completed_at?: string | null;
-        };
-      };
-      calendar_settings: {
-        Row: {
-          id: string;
-          provider: 'google' | 'apple' | 'outlook';
-          is_connected: boolean;
-          sync_enabled: boolean;
-          last_synced_at: string | null;
-          access_token_encrypted: string;
-          refresh_token_encrypted: string;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          provider: 'google' | 'apple' | 'outlook';
-          is_connected?: boolean;
-          sync_enabled?: boolean;
-          last_synced_at?: string | null;
-          access_token_encrypted?: string;
-          refresh_token_encrypted?: string;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          provider?: 'google' | 'apple' | 'outlook';
-          is_connected?: boolean;
-          sync_enabled?: boolean;
-          last_synced_at?: string | null;
-          access_token_encrypted?: string;
-          refresh_token_encrypted?: string;
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
       calendar_preferences: {
         Row: {
-          id: string;
-          auto_suggest_enabled: boolean;
-          default_power_block_duration: number;
-          notification_enabled: boolean;
-          notification_minutes_before: number;
-          work_start_time: string;
-          work_end_time: string;
-          created_at: string;
-          updated_at: string;
-        };
+          auto_suggest_enabled: boolean | null
+          created_at: string | null
+          default_power_block_duration: number | null
+          id: string
+          notification_enabled: boolean | null
+          notification_minutes_before: number | null
+          updated_at: string | null
+          user_id: string
+          work_end_time: string | null
+          work_start_time: string | null
+        }
         Insert: {
-          id?: string;
-          auto_suggest_enabled?: boolean;
-          default_power_block_duration?: number;
-          notification_enabled?: boolean;
-          notification_minutes_before?: number;
-          work_start_time?: string;
-          work_end_time?: string;
-          created_at?: string;
-          updated_at?: string;
-        };
+          auto_suggest_enabled?: boolean | null
+          created_at?: string | null
+          default_power_block_duration?: number | null
+          id?: string
+          notification_enabled?: boolean | null
+          notification_minutes_before?: number | null
+          updated_at?: string | null
+          user_id?: string
+          work_end_time?: string | null
+          work_start_time?: string | null
+        }
         Update: {
-          id?: string;
-          auto_suggest_enabled?: boolean;
-          default_power_block_duration?: number;
-          notification_enabled?: boolean;
-          notification_minutes_before?: number;
-          work_start_time?: string;
-          work_end_time?: string;
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
-      scheduled_events: {
+          auto_suggest_enabled?: boolean | null
+          created_at?: string | null
+          default_power_block_duration?: number | null
+          id?: string
+          notification_enabled?: boolean | null
+          notification_minutes_before?: number | null
+          updated_at?: string | null
+          user_id?: string
+          work_end_time?: string | null
+          work_start_time?: string | null
+        }
+        Relationships: []
+      }
+      calendar_settings: {
         Row: {
-          id: string;
-          title: string;
-          description: string;
-          start_time: string;
-          end_time: string;
-          event_type: 'power_block' | 'reset' | 'task' | 'other';
-          task_id: string | null;
-          journal_entry_id: string | null;
-          external_calendar_id: string;
-          is_synced: boolean;
-          created_at: string;
-          updated_at: string;
-        };
+          access_token_encrypted: string | null
+          created_at: string | null
+          id: string
+          is_connected: boolean | null
+          last_synced_at: string | null
+          provider: string
+          refresh_token_encrypted: string | null
+          sync_enabled: boolean | null
+          updated_at: string | null
+          user_id: string
+        }
         Insert: {
-          id?: string;
-          title: string;
-          description?: string;
-          start_time: string;
-          end_time: string;
-          event_type?: 'power_block' | 'reset' | 'task' | 'other';
-          task_id?: string | null;
-          journal_entry_id?: string | null;
-          external_calendar_id?: string;
-          is_synced?: boolean;
-          created_at?: string;
-          updated_at?: string;
-        };
+          access_token_encrypted?: string | null
+          created_at?: string | null
+          id?: string
+          is_connected?: boolean | null
+          last_synced_at?: string | null
+          provider: string
+          refresh_token_encrypted?: string | null
+          sync_enabled?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+        }
         Update: {
-          id?: string;
-          title?: string;
-          description?: string;
-          start_time?: string;
-          end_time?: string;
-          event_type?: 'power_block' | 'reset' | 'task' | 'other';
-          task_id?: string | null;
-          journal_entry_id?: string | null;
-          external_calendar_id?: string;
-          is_synced?: boolean;
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
-      support_crew_members: {
+          access_token_encrypted?: string | null
+          created_at?: string | null
+          id?: string
+          is_connected?: boolean | null
+          last_synced_at?: string | null
+          provider?: string
+          refresh_token_encrypted?: string | null
+          sync_enabled?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      cornerstones: {
         Row: {
-          id: string;
-          user_id: string;
-          member_email: string;
-          member_phone: string;
-          member_name: string;
-          role: 'coach' | 'counselor' | 'accountability_partner';
-          status: 'pending' | 'active' | 'declined';
-          can_view_resets: boolean;
-          auto_share_resets: boolean;
-          invitation_token: string;
-          invited_at: string;
-          accepted_at: string | null;
-          created_at: string;
-          updated_at: string;
-        };
+          color: string | null
+          created_at: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          name: string
+          order_index: number
+          user_id: string
+        }
         Insert: {
-          id?: string;
-          user_id: string;
-          member_email: string;
-          member_phone?: string;
-          member_name: string;
-          role: 'coach' | 'counselor' | 'accountability_partner';
-          status?: 'pending' | 'active' | 'declined';
-          can_view_resets?: boolean;
-          auto_share_resets?: boolean;
-          invitation_token?: string;
-          invited_at?: string;
-          accepted_at?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+          order_index: number
+          user_id?: string
+        }
         Update: {
-          id?: string;
-          user_id?: string;
-          member_email?: string;
-          member_phone?: string;
-          member_name?: string;
-          role?: 'coach' | 'counselor' | 'accountability_partner';
-          status?: 'pending' | 'active' | 'declined';
-          can_view_resets?: boolean;
-          auto_share_resets?: boolean;
-          invitation_token?: string;
-          invited_at?: string;
-          accepted_at?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
-      journal_entry_shares: {
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+          order_index?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      daily_checkins: {
         Row: {
-          id: string;
-          journal_entry_id: string;
-          shared_by_user_id: string;
-          shared_with_member_id: string;
-          can_comment: boolean;
-          created_at: string;
-        };
+          carrying: string
+          created_at: string
+          date: string
+          id: string
+          sleep_quality: string
+          user_id: string
+        }
         Insert: {
-          id?: string;
-          journal_entry_id: string;
-          shared_by_user_id: string;
-          shared_with_member_id: string;
-          can_comment?: boolean;
-          created_at?: string;
-        };
+          carrying: string
+          created_at?: string
+          date: string
+          id?: string
+          sleep_quality: string
+          user_id?: string
+        }
         Update: {
-          id?: string;
-          journal_entry_id?: string;
-          shared_by_user_id?: string;
-          shared_with_member_id?: string;
-          can_comment?: boolean;
-          created_at?: string;
-        };
-      };
-      journal_entry_comments: {
-        Row: {
-          id: string;
-          journal_entry_id: string;
-          crew_member_id: string;
-          comment_text: string;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          journal_entry_id: string;
-          crew_member_id: string;
-          comment_text: string;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          journal_entry_id?: string;
-          crew_member_id?: string;
-          comment_text?: string;
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
+          carrying?: string
+          created_at?: string
+          date?: string
+          id?: string
+          sleep_quality?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       daily_core_8: {
         Row: {
-          id: string;
-          user_id: string;
-          date: string;
-          fitness: boolean;
-          fuel: boolean;
-          meditation: boolean;
-          memoirs: boolean;
-          person_1: boolean;
-          person_2: boolean;
-          discovery: boolean;
-          declare: boolean;
-          created_at: string;
-          updated_at: string;
-        };
+          created_at: string
+          date: string
+          declare: boolean
+          discovery: boolean
+          fitness: boolean
+          fuel: boolean
+          id: string
+          meditation: boolean
+          memoirs: boolean
+          notes: Json
+          person_1: boolean
+          person_2: boolean
+          updated_at: string
+          user_id: string
+        }
         Insert: {
-          id?: string;
-          user_id: string;
-          date?: string;
-          fitness?: boolean;
-          fuel?: boolean;
-          meditation?: boolean;
-          memoirs?: boolean;
-          person_1?: boolean;
-          person_2?: boolean;
-          discovery?: boolean;
-          declare?: boolean;
-          created_at?: string;
-          updated_at?: string;
-        };
+          created_at?: string
+          date?: string
+          declare?: boolean
+          discovery?: boolean
+          fitness?: boolean
+          fuel?: boolean
+          id?: string
+          meditation?: boolean
+          memoirs?: boolean
+          notes?: Json
+          person_1?: boolean
+          person_2?: boolean
+          updated_at?: string
+          user_id: string
+        }
         Update: {
-          id?: string;
-          user_id?: string;
-          date?: string;
-          fitness?: boolean;
-          fuel?: boolean;
-          meditation?: boolean;
-          memoirs?: boolean;
-          person_1?: boolean;
-          person_2?: boolean;
-          discovery?: boolean;
-          declare?: boolean;
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
+          created_at?: string
+          date?: string
+          declare?: boolean
+          discovery?: boolean
+          fitness?: boolean
+          fuel?: boolean
+          id?: string
+          meditation?: boolean
+          memoirs?: boolean
+          notes?: Json
+          person_1?: boolean
+          person_2?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      journal_entries: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          reset_type: string
+          tags: string[] | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          reset_type: string
+          tags?: string[] | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          reset_type?: string
+          tags?: string[] | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      journal_entry_comments: {
+        Row: {
+          comment_text: string
+          created_at: string | null
+          crew_member_id: string
+          id: string
+          journal_entry_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          comment_text: string
+          created_at?: string | null
+          crew_member_id: string
+          id?: string
+          journal_entry_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          comment_text?: string
+          created_at?: string | null
+          crew_member_id?: string
+          id?: string
+          journal_entry_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "journal_entry_comments_crew_member_id_fkey"
+            columns: ["crew_member_id"]
+            isOneToOne: false
+            referencedRelation: "support_crew_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "journal_entry_comments_journal_entry_id_fkey"
+            columns: ["journal_entry_id"]
+            isOneToOne: false
+            referencedRelation: "journal_entries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      journal_entry_shares: {
+        Row: {
+          can_comment: boolean | null
+          created_at: string | null
+          id: string
+          journal_entry_id: string
+          shared_by_user_id: string
+          shared_with_member_id: string
+        }
+        Insert: {
+          can_comment?: boolean | null
+          created_at?: string | null
+          id?: string
+          journal_entry_id: string
+          shared_by_user_id: string
+          shared_with_member_id: string
+        }
+        Update: {
+          can_comment?: boolean | null
+          created_at?: string | null
+          id?: string
+          journal_entry_id?: string
+          shared_by_user_id?: string
+          shared_with_member_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "journal_entry_shares_journal_entry_id_fkey"
+            columns: ["journal_entry_id"]
+            isOneToOne: false
+            referencedRelation: "journal_entries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "journal_entry_shares_shared_with_member_id_fkey"
+            columns: ["shared_with_member_id"]
+            isOneToOne: false
+            referencedRelation: "support_crew_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      monthly_milestones: {
+        Row: {
+          content: string
+          cornerstone_id: string
+          created_at: string | null
+          id: string
+          month: number
+          updated_at: string | null
+          user_id: string
+          year: number
+        }
+        Insert: {
+          content: string
+          cornerstone_id: string
+          created_at?: string | null
+          id?: string
+          month: number
+          updated_at?: string | null
+          user_id?: string
+          year: number
+        }
+        Update: {
+          content?: string
+          cornerstone_id?: string
+          created_at?: string | null
+          id?: string
+          month?: number
+          updated_at?: string | null
+          user_id?: string
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "monthly_milestones_cornerstone_id_user_id_fkey"
+            columns: ["cornerstone_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "cornerstones"
+            referencedColumns: ["id", "user_id"]
+          },
+        ]
+      }
+      quarterly_goals: {
+        Row: {
+          content: string
+          cornerstone_id: string
+          created_at: string | null
+          id: string
+          quarter: number
+          updated_at: string | null
+          user_id: string
+          year: number
+        }
+        Insert: {
+          content: string
+          cornerstone_id: string
+          created_at?: string | null
+          id?: string
+          quarter: number
+          updated_at?: string | null
+          user_id?: string
+          year: number
+        }
+        Update: {
+          content?: string
+          cornerstone_id?: string
+          created_at?: string | null
+          id?: string
+          quarter?: number
+          updated_at?: string | null
+          user_id?: string
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quarterly_goals_cornerstone_id_user_id_fkey"
+            columns: ["cornerstone_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "cornerstones"
+            referencedColumns: ["id", "user_id"]
+          },
+        ]
+      }
+      reset_prompts: {
+        Row: {
+          created_at: string | null
+          id: string
+          order_index: number
+          prompt_text: string
+          reset_type: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          order_index?: number
+          prompt_text: string
+          reset_type: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          order_index?: number
+          prompt_text?: string
+          reset_type?: string
+        }
+        Relationships: []
+      }
+      scheduled_events: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          end_time: string
+          event_type: Database["public"]["Enums"]["event_type"]
+          external_calendar_id: string | null
+          id: string
+          is_synced: boolean | null
+          journal_entry_id: string | null
+          start_time: string
+          task_id: string | null
+          title: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          end_time: string
+          event_type?: Database["public"]["Enums"]["event_type"]
+          external_calendar_id?: string | null
+          id?: string
+          is_synced?: boolean | null
+          journal_entry_id?: string | null
+          start_time: string
+          task_id?: string | null
+          title: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          end_time?: string
+          event_type?: Database["public"]["Enums"]["event_type"]
+          external_calendar_id?: string | null
+          id?: string
+          is_synced?: boolean | null
+          journal_entry_id?: string | null
+          start_time?: string
+          task_id?: string | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scheduled_events_journal_entry_id_user_id_fkey"
+            columns: ["journal_entry_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "journal_entries"
+            referencedColumns: ["id", "user_id"]
+          },
+          {
+            foreignKeyName: "scheduled_events_task_id_user_id_fkey"
+            columns: ["task_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id", "user_id"]
+          },
+        ]
+      }
+      support_crew_members: {
+        Row: {
+          accepted_at: string | null
+          auto_share_resets: boolean | null
+          can_view_resets: boolean | null
+          created_at: string | null
+          id: string
+          invitation_token: string | null
+          invited_at: string | null
+          member_email: string
+          member_name: string
+          member_phone: string | null
+          role: string
+          status: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          auto_share_resets?: boolean | null
+          can_view_resets?: boolean | null
+          created_at?: string | null
+          id?: string
+          invitation_token?: string | null
+          invited_at?: string | null
+          member_email: string
+          member_name: string
+          member_phone?: string | null
+          role: string
+          status?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          accepted_at?: string | null
+          auto_share_resets?: boolean | null
+          can_view_resets?: boolean | null
+          created_at?: string | null
+          id?: string
+          invitation_token?: string | null
+          invited_at?: string | null
+          member_email?: string
+          member_name?: string
+          member_phone?: string | null
+          role?: string
+          status?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      tasks: {
+        Row: {
+          completed_at: string | null
+          cornerstone_id: string
+          created_at: string | null
+          description: string | null
+          id: string
+          order_index: number
+          power_block: string | null
+          status: Database["public"]["Enums"]["task_status"]
+          title: string
+          updated_at: string | null
+          user_id: string
+          weekly_anchor_id: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          cornerstone_id: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          order_index?: number
+          power_block?: string | null
+          status?: Database["public"]["Enums"]["task_status"]
+          title: string
+          updated_at?: string | null
+          user_id?: string
+          weekly_anchor_id?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          cornerstone_id?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          order_index?: number
+          power_block?: string | null
+          status?: Database["public"]["Enums"]["task_status"]
+          title?: string
+          updated_at?: string | null
+          user_id?: string
+          weekly_anchor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tasks_cornerstone_id_user_id_fkey"
+            columns: ["cornerstone_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "cornerstones"
+            referencedColumns: ["id", "user_id"]
+          },
+          {
+            foreignKeyName: "tasks_weekly_anchor_id_fkey"
+            columns: ["weekly_anchor_id"]
+            isOneToOne: false
+            referencedRelation: "weekly_anchors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_avatar_preferences: {
         Row: {
-          id: string;
-          user_id: string;
-          avatar_style: 'human_silhouette' | 'flame_spirit' | 'geometry_being' | 'animal_totem' | 'faith_variant';
-          created_at: string;
-          updated_at: string;
-        };
+          avatar_style: string
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
         Insert: {
-          id?: string;
-          user_id: string;
-          avatar_style?: 'human_silhouette' | 'flame_spirit' | 'geometry_being' | 'animal_totem' | 'faith_variant';
-          created_at?: string;
-          updated_at?: string;
-        };
+          avatar_style?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
         Update: {
-          id?: string;
-          user_id?: string;
-          avatar_style?: 'human_silhouette' | 'flame_spirit' | 'geometry_being' | 'animal_totem' | 'faith_variant';
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
-    };
-  };
+          avatar_style?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      weekly_anchors: {
+        Row: {
+          content: string
+          cornerstone_id: string
+          created_at: string | null
+          id: string
+          updated_at: string | null
+          user_id: string
+          week: number
+          year: number
+        }
+        Insert: {
+          content: string
+          cornerstone_id: string
+          created_at?: string | null
+          id?: string
+          updated_at?: string | null
+          user_id?: string
+          week: number
+          year: number
+        }
+        Update: {
+          content?: string
+          cornerstone_id?: string
+          created_at?: string | null
+          id?: string
+          updated_at?: string | null
+          user_id?: string
+          week?: number
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "weekly_anchors_cornerstone_id_user_id_fkey"
+            columns: ["cornerstone_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "cornerstones"
+            referencedColumns: ["id", "user_id"]
+          },
+        ]
+      }
+      yearly_visions: {
+        Row: {
+          content: string
+          cornerstone_id: string
+          created_at: string | null
+          id: string
+          updated_at: string | null
+          user_id: string
+          year: number
+        }
+        Insert: {
+          content: string
+          cornerstone_id: string
+          created_at?: string | null
+          id?: string
+          updated_at?: string | null
+          user_id?: string
+          year: number
+        }
+        Update: {
+          content?: string
+          cornerstone_id?: string
+          created_at?: string | null
+          id?: string
+          updated_at?: string | null
+          user_id?: string
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "yearly_visions_cornerstone_id_user_id_fkey"
+            columns: ["cornerstone_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "cornerstones"
+            referencedColumns: ["id", "user_id"]
+          },
+        ]
+      }
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      seed_default_cornerstones: {
+        Args: { target_user_id: string }
+        Returns: undefined
+      }
+    }
+    Enums: {
+      event_type: "power_block" | "reset" | "task" | "other"
+      task_status: "quicklist" | "hotlist" | "achieved"
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
 }
+
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
+
+export type Tables<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
+
+export type TablesInsert<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
+
+export type TablesUpdate<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never
+
+export type Enums<
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
+
+export const Constants = {
+  public: {
+    Enums: {
+      event_type: ["power_block", "reset", "task", "other"],
+      task_status: ["quicklist", "hotlist", "achieved"],
+    },
+  },
+} as const
 
 export type Cornerstone = Database['public']['Tables']['cornerstones']['Row'];
 export type YearlyVision = Database['public']['Tables']['yearly_visions']['Row'];
@@ -516,7 +870,12 @@ export type JournalEntryComment = Database['public']['Tables']['journal_entry_co
 export type DailyCore8 = Database['public']['Tables']['daily_core_8']['Row'];
 export type UserAvatarPreferences = Database['public']['Tables']['user_avatar_preferences']['Row'];
 
-export type ResetType = 'clarity' | 'gratitude' | 'insight';
+/*
+  The primary emotion family a reset was filed under. Mirrors the CHECK
+  constraint on journal_entries.reset_type (see the 20260815000000 migration).
+  'unspecified' covers a completed reset where no feeling was named.
+*/
+export type ResetType = 'anger' | 'fear' | 'sadness' | 'joy' | 'confusion' | 'unspecified';
 export type TaskStatus = 'quicklist' | 'hotlist' | 'achieved';
 export type CalendarProvider = 'google' | 'apple' | 'outlook';
 export type EventType = 'power_block' | 'reset' | 'task' | 'other';

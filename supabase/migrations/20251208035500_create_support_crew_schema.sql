@@ -109,18 +109,39 @@ CREATE TABLE IF NOT EXISTS journal_entry_comments (
 
 ALTER TABLE journal_entry_comments ENABLE ROW LEVEL SECURITY;
 
+/*
+  Previously this joined support_crew_members on scm.user_id = auth.uid() with
+  nothing tying the entry to its owner, because journal_entries had no owner
+  column. The predicate reduced to "this entry exists AND I have at least one
+  crew member", letting any user with a single crew member read every comment
+  on every entry. journal_entries.user_id now exists, so the check is direct.
+*/
 CREATE POLICY "Entry owners can view all comments on their entries"
   ON journal_entry_comments FOR SELECT
+  TO authenticated
   USING (
     EXISTS (
       SELECT 1 FROM journal_entries je
-      JOIN support_crew_members scm ON scm.user_id = auth.uid()
-      WHERE je.id = journal_entry_id
+      WHERE je.id = journal_entry_comments.journal_entry_id
+      AND je.user_id = auth.uid()
+    )
+  );
+
+-- Entry owners can also remove comments left on their own entries.
+CREATE POLICY "Entry owners can delete comments on their entries"
+  ON journal_entry_comments FOR DELETE
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM journal_entries je
+      WHERE je.id = journal_entry_comments.journal_entry_id
+      AND je.user_id = auth.uid()
     )
   );
 
 CREATE POLICY "Crew members can view their own comments"
   ON journal_entry_comments FOR SELECT
+  TO authenticated
   USING (
     EXISTS (
       SELECT 1 FROM support_crew_members
