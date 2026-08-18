@@ -366,6 +366,30 @@ export type Database = {
           },
         ]
       }
+      onboarding_responses: {
+        Row: {
+          completed_at: string
+          created_at: string
+          id: string
+          responses: Json
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string
+          created_at?: string
+          id?: string
+          responses?: Json
+          user_id?: string
+        }
+        Update: {
+          completed_at?: string
+          created_at?: string
+          id?: string
+          responses?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
       quarterly_goals: {
         Row: {
           content: string

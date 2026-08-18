@@ -14,6 +14,7 @@ import SupportCrewManager from './components/SupportCrewManager';
 import { DailyCore8Checklist } from './components/DailyCore8Checklist';
 import { MorningCheckIn } from './components/MorningCheckIn';
 import { ConsentModal } from './components/ConsentModal';
+import { OnboardingAssessment } from './components/OnboardingAssessment';
 import { isMorning, localDateString } from './lib/morning';
 
 type View = 'home' | 'daily-core-8' | 'daily-reset' | 'planner' | 'cornerstones' | 'support-crew' | 'settings';
@@ -30,6 +31,7 @@ function App() {
   const [calendarKey, setCalendarKey] = useState(0);
   const [showMorningCheckIn, setShowMorningCheckIn] = useState(false);
   const [consentRecorded, setConsentRecorded] = useState(false);
+  const [onboardingRecorded, setOnboardingRecorded] = useState(false);
 
   useEffect(() => {
     void loadInitialState();
@@ -101,6 +103,16 @@ function App() {
   const hasConsented = Boolean(user?.user_metadata?.consent_agreed_at) || consentRecorded;
   if (!hasConsented) {
     return <ConsentModal onAgreed={() => setConsentRecorded(true)} />;
+  }
+
+  /*
+    Onboarding runs once, after consent and before anything else. Like the
+    consent gate, the local flag covers the window between the metadata write
+    succeeding and the refreshed user arriving through the auth listener.
+  */
+  const hasOnboarded = Boolean(user?.user_metadata?.onboarding_completed) || onboardingRecorded;
+  if (!hasOnboarded) {
+    return <OnboardingAssessment onComplete={() => setOnboardingRecorded(true)} />;
   }
 
   /* Full focus: rendered instead of the whole shell, so there is no nav. */
