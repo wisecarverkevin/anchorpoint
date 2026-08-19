@@ -4,6 +4,7 @@ import type { JournalEntry, ResetType, SupportCrewMember, JournalEntryShare } fr
 import { getResetTypeName } from './ResetTypeSelector';
 import { supabase } from '../lib/supabase';
 import JournalComments from './JournalComments';
+import { localDateString } from '../lib/morning';
 
 interface JournalEntriesListProps {
   entries: JournalEntry[];
@@ -74,8 +75,9 @@ export function JournalEntriesList({ entries }: JournalEntriesListProps) {
 
   const uniqueDates = useMemo(() => {
     const dates = entries.map((entry) => {
-      const date = new Date(entry.created_at);
-      return date.toISOString().split('T')[0];
+      // Local date, not UTC: toISOString() files an evening entry under
+      // tomorrow for anyone west of Greenwich.
+      return localDateString(new Date(entry.created_at));
     });
     return Array.from(new Set(dates)).sort().reverse();
   }, [entries]);

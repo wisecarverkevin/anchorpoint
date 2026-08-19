@@ -69,8 +69,27 @@ export const CORNERSTONE_OPTIONS = [
 ] as const;
 
 /*
-  Which family a feeling belongs to. Built from EMOTION_FAMILIES so the two can
-  never drift apart.
+  Pill colours for the emotion families, used wherever a reset is summarised.
+  Kept as hex rather than Tailwind classes because the family is only known at
+  runtime and Tailwind cannot generate classes from a dynamic value.
+*/
+export const EMOTION_STYLES: Record<ResetTypeValue, { label: string; text: string; bg: string }> = {
+  anger: { label: 'Anger', text: '#B5453A', bg: 'rgba(232, 106, 93, 0.14)' },
+  fear: { label: 'Fear', text: '#9A6B15', bg: 'rgba(217, 154, 43, 0.16)' },
+  sadness: { label: 'Sadness', text: '#3B6489', bg: 'rgba(74, 127, 181, 0.14)' },
+  joy: { label: 'Joy', text: '#157A5A', bg: 'rgba(29, 158, 117, 0.14)' },
+  confusion: { label: 'Confusion', text: '#6D42C4', bg: 'rgba(139, 92, 246, 0.14)' },
+  /* A completed reset where no feeling was named still needs a pill. */
+  unspecified: { label: 'Unnamed', text: '#57534E', bg: 'rgba(120, 113, 108, 0.12)' },
+};
+
+export function emotionStyle(resetType: string) {
+  return EMOTION_STYLES[resetType as ResetTypeValue] ?? EMOTION_STYLES.unspecified;
+}
+
+/*
+  Which feeling belongs to which family. Built from EMOTION_FAMILIES so the two
+  can never drift apart.
 */
 const FEELING_TO_FAMILY = new Map<string, EmotionFamily>(
   EMOTION_FAMILIES.flatMap((group) =>
@@ -166,6 +185,38 @@ export function closingSentence(a: ResetAnswers): string {
 }
 
 export const RESET_POINTS = 65;
+
+/*
+  Labels for the stored answers, in the order they were asked. Drives the
+  expanded view in the history screen so it reads as prose rather than JSON.
+*/
+export const ANSWER_LABELS: { key: keyof ResetAnswers; label: string }[] = [
+  { key: 'entry', label: 'What brought you here' },
+  { key: 'bodyLocations', label: 'Where you felt it' },
+  { key: 'feelings', label: 'What you were feeling' },
+  { key: 'underneath', label: 'Underneath that' },
+  { key: 'cornerstone', label: 'Rooted in' },
+  { key: 'outsideView', label: 'What someone watching would see' },
+  { key: 'miracle', label: 'If it had already shifted' },
+  { key: 'friend', label: 'What you told your friend' },
+  { key: 'mirror', label: 'How it landed reading it back' },
+  { key: 'knowNow', label: 'What you know now' },
+  { key: 'oneStep', label: 'Your one step' },
+];
+
+/*
+  Stored content is a JSON string. Parsed defensively: a malformed or legacy
+  row should render as much as it can rather than breaking the whole list.
+*/
+export function parseResetContent(content: string): Partial<ResetAnswers> | null {
+  try {
+    const parsed: unknown = JSON.parse(content);
+    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) return null;
+    return parsed as Partial<ResetAnswers>;
+  } catch {
+    return null;
+  }
+}
 
 /*
   Fallback interstitials, used when the coach toggle is on but the Edge Function

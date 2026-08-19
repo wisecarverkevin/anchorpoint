@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Anchor, RefreshCw, Target, ListChecks, Home, Users, Settings, Sparkles, LogOut } from 'lucide-react';
+import { Anchor, RefreshCw, Target, ListChecks, Home, Users, Settings, Sparkles, LogOut, BookOpen } from 'lucide-react';
 import { supabase } from './lib/supabase';
 import { useAuth } from './lib/AuthContext';
 import type { Cornerstone } from './lib/types';
@@ -15,9 +15,18 @@ import { DailyCore8Checklist } from './components/DailyCore8Checklist';
 import { MorningCheckIn } from './components/MorningCheckIn';
 import { ConsentModal } from './components/ConsentModal';
 import { OnboardingAssessment } from './components/OnboardingAssessment';
+import { ResetHistory } from './components/ResetHistory';
 import { isMorning, localDateString } from './lib/morning';
 
-type View = 'home' | 'daily-core-8' | 'daily-reset' | 'planner' | 'cornerstones' | 'support-crew' | 'settings';
+type View =
+  | 'home'
+  | 'daily-core-8'
+  | 'journey'
+  | 'daily-reset'
+  | 'planner'
+  | 'cornerstones'
+  | 'support-crew'
+  | 'settings';
 
 function App() {
   const { user, signOut } = useAuth();
@@ -152,6 +161,17 @@ function App() {
               >
                 <Sparkles size={18} />
                 Today's practice
+              </button>
+              <button
+                onClick={() => setCurrentView('journey')}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+                  currentView === 'journey'
+                    ? 'bg-stone-100 text-stone-900'
+                    : 'text-stone-600 hover:text-stone-900 hover:bg-stone-50'
+                }`}
+              >
+                <BookOpen size={18} />
+                Your journey
               </button>
               <button
                 onClick={() => setCurrentView('daily-reset')}
@@ -326,6 +346,10 @@ function App() {
         {currentView === 'planner' && <AnchorPlanner />}
 
         {currentView === 'support-crew' && <SupportCrewManager />}
+
+        {currentView === 'journey' && (
+          <ResetHistory onStartReset={() => setCurrentView('daily-reset')} />
+        )}
 
         {currentView === 'daily-reset' && <Reset />}
 
