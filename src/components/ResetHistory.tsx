@@ -35,7 +35,7 @@ function formatEntryDate(iso: string | null): string {
 
 function PatternCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-white border border-stone-200 rounded-xl px-5 py-4">
+    <div className="bg-white border border-stone-200 rounded-xl px-6 py-6">
       <p className="text-sm text-stone-500 mb-1.5">{label}</p>
       <p className="text-lg font-medium text-stone-900 leading-snug">{value}</p>
     </div>
@@ -138,7 +138,7 @@ export function ResetHistory({ onStartReset }: ResetHistoryProps) {
   if (entries.length === 0) {
     return (
       <div className="max-w-md mx-auto text-center py-20">
-        <h2 className="text-2xl font-light text-stone-900 mb-8 leading-snug">
+        <h2 className="font-serif text-2xl text-stone-900 mb-8 leading-heading">
           Your journey starts with your first reset.
         </h2>
         <button

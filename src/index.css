@@ -1,8 +1,100 @@
+/*
+  Fonts are imported before Tailwind so the @import sits at the top of the
+  compiled stylesheet, which CSS requires.
+
+  Plus Jakarta Sans carries the interface. Lora carries the reflective voice —
+  Reset questions, coach responses, greetings — and is applied via `font-serif`
+  at those call sites rather than globally.
+
+  Weights: 400 body, 500 headings. 700 is deliberately not loaded, so a stray
+  `font-bold` degrades to 500 rather than rendering heavy.
+*/
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Each Reset step animates in rather than snapping. */
+@layer base {
+  :root {
+    --ap-cream: #f7f3ee;
+    --ap-ink: #1a1814;
+    --ap-teal: #1d9e75;
+    --ap-gold: #c9a84c;
+    --ap-lavender: #8b7ec8;
+  }
+
+  html {
+    background-color: var(--ap-cream);
+  }
+
+  body {
+    background-color: var(--ap-cream);
+    color: var(--ap-ink);
+    font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    font-weight: 400;
+    /* Generous by default: this is read by people in an emotional state. */
+    line-height: 1.75;
+    letter-spacing: 0.01em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /*
+    Headings are 500 everywhere. Tailwind's font-light / font-semibold / font-bold
+    are overridden below so no call site can reintroduce a heavier weight.
+  */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: 500;
+    line-height: 1.6;
+    letter-spacing: 0;
+  }
+
+  p,
+  li,
+  label,
+  span,
+  input,
+  textarea,
+  button {
+    letter-spacing: 0.01em;
+  }
+}
+
+@layer utilities {
+  /*
+    The design calls for exactly two weights. These clamp the existing
+    font-light / font-semibold / font-bold usages already spread through the
+    codebase instead of editing every call site.
+  */
+  .font-light,
+  .font-normal {
+    font-weight: 400;
+  }
+
+  .font-medium,
+  .font-semibold,
+  .font-bold {
+    font-weight: 500;
+  }
+
+  /*
+    Headings stay at 500 even when a call site says font-light. `:where()`
+    contributes no specificity, so this matches `.font-light` exactly and wins
+    on source order rather than by escalating specificity.
+  */
+  :where(h1, h2, h3, h4, h5, h6).font-light,
+  :where(h1, h2, h3, h4, h5, h6).font-normal {
+    font-weight: 500;
+  }
+}
+
+/* Each Reset step and expanding panel animates in rather than snapping. */
 @keyframes fadeSlide {
   from {
     opacity: 0;
@@ -15,7 +107,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-\[fadeSlide_320ms_ease-out\] {
+  .animate-\[fadeSlide_320ms_ease-out\],
+  .animate-\[fadeSlide_240ms_ease-out\] {
     animation: none;
   }
 }

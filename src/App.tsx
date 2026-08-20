@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { Anchor, RefreshCw, Target, ListChecks, Home, Users, Settings, Sparkles, LogOut, BookOpen } from 'lucide-react';
 import { supabase } from './lib/supabase';
 import { useAuth } from './lib/AuthContext';
@@ -17,6 +18,7 @@ import { ConsentModal } from './components/ConsentModal';
 import { OnboardingAssessment } from './components/OnboardingAssessment';
 import { ResetHistory } from './components/ResetHistory';
 import { isMorning, localDateString } from './lib/morning';
+import { pressable } from './lib/motion';
 
 type View =
   | 'home'
@@ -260,8 +262,13 @@ function App() {
               </p>
             </div>
 
+            {/* Cards rise 8px into place, 0.1s apart. */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <button
+              <motion.button
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, ease: 'easeOut', delay: 0 }}
+                whileTap={pressable.whileTap}
                 onClick={() => setCurrentView('daily-core-8')}
                 className="bg-white border border-stone-200 rounded-xl p-6 text-left hover:shadow-md transition-shadow"
               >
@@ -270,9 +277,13 @@ function App() {
                 <p className="text-stone-600">
                   Track your eight daily essentials and watch your avatar evolve
                 </p>
-              </button>
+              </motion.button>
 
-              <button
+              <motion.button
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, ease: 'easeOut', delay: 0.1 }}
+                whileTap={pressable.whileTap}
                 onClick={() => setCurrentView('daily-reset')}
                 className="bg-white border border-stone-200 rounded-xl p-6 text-left hover:shadow-md transition-shadow"
               >
@@ -282,9 +293,13 @@ function App() {
                   Take a breath. Work through what you are carrying. Come out clearer than you
                   went in.
                 </p>
-              </button>
+              </motion.button>
 
-              <button
+              <motion.button
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, ease: 'easeOut', delay: 0.2 }}
+                whileTap={pressable.whileTap}
                 onClick={() => setCurrentView('planner')}
                 className="bg-white border border-stone-200 rounded-xl p-6 text-left hover:shadow-md transition-shadow"
               >
@@ -293,9 +308,13 @@ function App() {
                 <p className="text-stone-600">
                   Organize your goals from yearly visions to daily tasks
                 </p>
-              </button>
+              </motion.button>
 
-              <button
+              <motion.button
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, ease: 'easeOut', delay: 0.3 }}
+                whileTap={pressable.whileTap}
                 onClick={() => setCurrentView('cornerstones')}
                 className="bg-white border border-stone-200 rounded-xl p-6 text-left hover:shadow-md transition-shadow"
               >
@@ -304,9 +323,13 @@ function App() {
                 <p className="text-stone-600">
                   Define what matters most across health, wealth, relationships, and purpose
                 </p>
-              </button>
+              </motion.button>
 
-              <button
+              <motion.button
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, ease: 'easeOut', delay: 0.4 }}
+                whileTap={pressable.whileTap}
                 onClick={() => setCurrentView('support-crew')}
                 className="bg-white border border-stone-200 rounded-xl p-6 text-left hover:shadow-md transition-shadow"
               >
@@ -315,7 +338,7 @@ function App() {
                 <p className="text-stone-600">
                   Invite trusted people to support and encourage your journey
                 </p>
-              </button>
+              </motion.button>
             </div>
           </div>
         )}

@@ -17,7 +17,7 @@ export function TaskCard({ task, cornerstone, onDelete, onDragStart, onDragEnd }
       onDragEnd={onDragEnd}
       className="group bg-white rounded-lg p-4 shadow-sm border-l-4 hover:shadow-md transition-all cursor-move"
       style={{
-        borderLeftColor: cornerstone?.color || '#3B82F6',
+        borderLeftColor: cornerstone?.color || '#1D9E75',
       }}
     >
       <div className="flex items-start gap-3">

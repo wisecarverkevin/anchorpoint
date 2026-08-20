@@ -1,4 +1,6 @@
+import { motion } from 'framer-motion';
 import { RESET_STEP_COUNT } from '../lib/reset';
+import { breathing } from '../lib/motion';
 
 interface ResetAvatarStripProps {
   /* 0 at the first question, 1 once the reset is complete. */
@@ -29,7 +31,9 @@ export function ResetAvatarStrip({ progress }: ResetAvatarStripProps) {
             filter: `blur(${8 + glow}px)`,
           }}
         />
-        <svg
+        {/* Continuous breath: 1.0 -> 1.025 -> 1.0 over 3.5s, forever. */}
+        <motion.svg
+          animate={breathing}
           width="52"
           height="72"
           viewBox="0 0 52 72"
@@ -63,7 +67,7 @@ export function ResetAvatarStrip({ progress }: ResetAvatarStripProps) {
             strokeWidth={strokeWidth}
             strokeLinecap="round"
           />
-        </svg>
+        </motion.svg>
       </div>
     </div>
   );

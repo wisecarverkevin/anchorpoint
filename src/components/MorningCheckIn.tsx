@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react';
+import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../lib/AuthContext';
@@ -9,6 +10,7 @@ import {
   localDateString,
   type SleepQuality,
 } from '../lib/morning';
+import { greetingContainer, greetingWord, pressable } from '../lib/motion';
 
 const TEAL = '#1D9E75';
 
@@ -67,15 +69,25 @@ export function MorningCheckIn({ onComplete }: MorningCheckInProps) {
     <div className="min-h-screen bg-stone-50 flex flex-col items-center justify-center px-6 py-16">
       <form onSubmit={handleSubmit} className="w-full max-w-md">
         <div className="mb-12">
-          <h1 className="text-3xl font-light text-stone-900 leading-snug">
-            Good morning, {name}.
-          </h1>
+          {/* Each word drifts up and fades in, 0.08s apart. */}
+          <motion.h1
+            className="font-serif text-3xl text-stone-900 leading-heading"
+            variants={greetingContainer}
+            initial="hidden"
+            animate="visible"
+          >
+            {`Good morning, ${name}.`.split(' ').map((word, i) => (
+              <motion.span key={`${word}-${i}`} variants={greetingWord} className="inline-block mr-[0.28em]">
+                {word}
+              </motion.span>
+            ))}
+          </motion.h1>
           <p className="text-stone-500 mt-2">{formatMorningDate()}</p>
           <p className="text-stone-600 mt-6">Take a moment before the day begins.</p>
         </div>
 
         <div className="mb-10">
-          <h2 className="text-lg text-stone-900 mb-4">How did you sleep?</h2>
+          <h2 className="font-serif text-xl text-stone-900 mb-4">How did you sleep?</h2>
           <div className="flex flex-wrap gap-2.5">
             {SLEEP_OPTIONS.map((option) => {
               const selected = sleep === option;
@@ -99,7 +111,7 @@ export function MorningCheckIn({ onComplete }: MorningCheckInProps) {
         </div>
 
         <div className="mb-10">
-          <label htmlFor="carrying" className="block text-lg text-stone-900 mb-4">
+          <label htmlFor="carrying" className="block font-serif text-xl text-stone-900 mb-4">
             What's one thing you're carrying into today?
           </label>
           <textarea
@@ -118,7 +130,8 @@ export function MorningCheckIn({ onComplete }: MorningCheckInProps) {
           </p>
         )}
 
-        <button
+        <motion.button
+          {...pressable}
           type="submit"
           disabled={!canSubmit || saving}
           className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-medium text-white transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
@@ -126,7 +139,7 @@ export function MorningCheckIn({ onComplete }: MorningCheckInProps) {
         >
           {saving && <Loader2 size={17} className="animate-spin" />}
           Begin my day
-        </button>
+        </motion.button>
       </form>
 
       <p className="text-sm text-stone-400 mt-16">AnchorPoint — your daily practice.</p>

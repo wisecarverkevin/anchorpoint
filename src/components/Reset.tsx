@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, type ReactNode } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, ArrowLeft, ArrowRight, Loader2, MessageCircle, Check } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../lib/AuthContext';
@@ -16,8 +17,11 @@ import {
   type ResetAnswers,
 } from '../lib/reset';
 import { ResetAvatarStrip, ResetProgressBar } from './ResetAvatarStrip';
+import { pressable, stepTransition, stepVariants } from '../lib/motion';
 
 const TEAL = '#1D9E75';
+/* Gold is reserved for earned moments — this badge is one of the few. */
+const GOLD = '#C9A84C';
 
 /* Shared field styling so every step's inputs match without repetition. */
 const textareaClass =
@@ -41,7 +45,7 @@ function StepShell({
 }) {
   return (
     <div className="animate-[fadeSlide_320ms_ease-out]">
-      <h2 className="text-2xl font-light text-stone-900 leading-snug mb-3">{question}</h2>
+      <h2 className="font-serif text-2xl text-stone-900 leading-heading mb-3">{question}</h2>
       {hint && <p className="text-stone-600 leading-relaxed mb-6">{hint}</p>}
       <div className={hint ? '' : 'mt-6'}>{children}</div>
       {example && (
@@ -86,6 +90,8 @@ export function Reset() {
   const { user } = useAuth();
 
   const [step, setStep] = useState(1);
+  /* +1 advancing, -1 going back — drives which way the step slides. */
+  const [direction, setDirection] = useState<1 | -1>(1);
   const [answers, setAnswers] = useState<ResetAnswers>(EMPTY_ANSWERS);
   const [complete, setComplete] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -180,6 +186,7 @@ export function Reset() {
       void finish();
       return;
     }
+    setDirection(1);
     setStep(completedStep + 1);
     setCoachLine(null);
     if (coachEnabled) void fetchCoachLine(completedStep);
@@ -187,6 +194,7 @@ export function Reset() {
 
   const goBack = () => {
     if (step === 1) return;
+    setDirection(-1);
     setStep(step - 1);
     setCoachLine(null);
   };
@@ -268,14 +276,14 @@ export function Reset() {
             </span>
           </div>
 
-          <p className="text-2xl font-light text-stone-900 leading-relaxed mb-8">
+          <p className="font-serif text-2xl text-stone-900 leading-body mb-8">
             {closingSentence(answers)}
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-3 mb-8">
             <span
-              className="px-4 py-1.5 rounded-full text-sm font-semibold text-white"
-              style={{ backgroundColor: TEAL }}
+              className="px-4 py-1.5 rounded-full text-sm font-medium"
+              style={{ backgroundColor: GOLD, color: '#3A3015' }}
             >
               +{RESET_POINTS} points
             </span>
@@ -285,7 +293,8 @@ export function Reset() {
           </div>
 
           {!reflection && (
-            <button
+            <motion.button
+              {...pressable}
               onClick={() => void fetchReflection()}
               disabled={reflectionLoading}
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-medium text-white transition-opacity disabled:opacity-60"
@@ -297,7 +306,7 @@ export function Reset() {
                 <MessageCircle size={17} />
               )}
               Go deeper with your coach
-            </button>
+            </motion.button>
           )}
 
           {reflectionError && (
@@ -317,7 +326,7 @@ export function Reset() {
             </div>
             <div className="space-y-4">
               {reflection.split('\n').filter((p) => p.trim()).map((para, i) => (
-                <p key={i} className="text-stone-700 leading-relaxed">
+                <p key={i} className="font-serif text-stone-700 leading-body text-[1.05rem]">
                   {para.trim()}
                 </p>
               ))}
@@ -334,8 +343,19 @@ export function Reset() {
     );
   }
 
+  /*
+    Sad and fearful sessions get a lavender wash. Lavender is the one colour in
+    the system chosen for emotional safety rather than brand identity, so it
+    appears only here and on the Higher Power cornerstone.
+  */
+  const family = primaryEmotionFamily(answers.feelings);
+  const calmingTint = family === 'sadness' || family === 'fear';
+
   return (
-    <div className="max-w-2xl mx-auto">
+    <div
+      className="max-w-2xl mx-auto -mx-4 px-4 rounded-3xl transition-colors duration-700"
+      style={calmingTint ? { backgroundColor: 'rgba(139, 126, 200, 0.07)' } : undefined}
+    >
       <div ref={scrollAnchor} />
 
       <ResetAvatarStrip progress={(step - 1) / RESET_STEP_COUNT} />
@@ -380,6 +400,17 @@ export function Reset() {
       )}
 
       <div className="bg-white border border-stone-200 rounded-2xl p-8 shadow-sm">
+        {/* Steps travel horizontally: forward from the right, back from the left. */}
+        <AnimatePresence mode="wait" custom={direction} initial={false}>
+          <motion.div
+            key={step}
+            custom={direction}
+            variants={stepVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={stepTransition}
+          >
         {step === 1 && (
           <StepShell
             question="Take a breath. What brought you here today?"
@@ -625,6 +656,8 @@ export function Reset() {
             </div>
           </StepShell>
         )}
+          </motion.div>
+        </AnimatePresence>
 
         {saveError && (
           <p className="mt-6 text-sm text-red-700 bg-red-50 border border-red-100 rounded-lg px-4 py-3">
@@ -643,7 +676,8 @@ export function Reset() {
             Back
           </button>
 
-          <button
+          <motion.button
+            {...pressable}
             type="button"
             onClick={goNext}
             disabled={!canAdvance() || saving}
@@ -653,7 +687,7 @@ export function Reset() {
             {saving && <Loader2 size={16} className="animate-spin" />}
             {step === RESET_STEP_COUNT ? 'Complete reset' : 'Continue'}
             {step < RESET_STEP_COUNT && <ArrowRight size={17} />}
-          </button>
+          </motion.button>
         </div>
       </div>
 

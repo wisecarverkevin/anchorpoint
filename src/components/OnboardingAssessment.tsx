@@ -119,7 +119,7 @@ export function OnboardingAssessment({ onComplete }: OnboardingAssessmentProps) 
     return (
       <div className="min-h-screen bg-stone-50 flex flex-col items-center justify-center px-6 py-16">
         <div className="w-full max-w-md animate-[fadeSlide_320ms_ease-out]">
-          <h1 className="text-3xl font-light text-stone-900 leading-snug mb-6">
+          <h1 className="font-serif text-3xl text-stone-900 leading-heading mb-6">
             Before we get started
           </h1>
           <p className="text-stone-600 leading-relaxed mb-10">
@@ -144,7 +144,7 @@ export function OnboardingAssessment({ onComplete }: OnboardingAssessmentProps) 
     return (
       <div className="min-h-screen bg-stone-50 flex flex-col items-center justify-center px-6 py-16">
         <div className="w-full max-w-md text-center animate-[fadeSlide_320ms_ease-out]">
-          <h1 className="text-3xl font-light text-stone-900 mb-5">You are set up.</h1>
+          <h1 className="font-serif text-3xl text-stone-900 mb-5">You are set up.</h1>
           <p className="text-stone-600 leading-relaxed mb-10">
             Your answers will shape everything from here. AnchorPoint is ready when you are.
           </p>
@@ -207,7 +207,7 @@ export function OnboardingAssessment({ onComplete }: OnboardingAssessmentProps) 
             </p>
           )}
 
-          <h1 className="text-2xl font-light text-stone-900 leading-snug mb-3">
+          <h1 className="font-serif text-2xl text-stone-900 leading-heading mb-3">
             {question.question}
           </h1>
 
